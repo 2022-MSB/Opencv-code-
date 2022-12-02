@@ -2,11 +2,14 @@ import tensorflow.keras
 import numpy as np
 import cv2
 
-cnt = 0
 model = tensorflow.keras.models.load_model('keras_model.h5')
 cap = cv2.VideoCapture(0)
 size = (224, 224)
 classes = ['tire', 'level 1 tire']
+
+cnt = 0
+damage_tire = 0
+normal_tire = 0
 
 while cap.isOpened():
     ret, img = cap.read()
@@ -27,7 +30,15 @@ while cap.isOpened():
     idx = np.argmax(prediction)
 
     cv2.putText(img, text=classes[idx], org=(10, 30), fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.8, color=(0, 0, 255), thickness=2)
-
     cv2.imshow('result', img)
-    if cv2.waitKey(1) == ord('q'):
+    print(idx)
+
+    cnt += 1
+    if idx == 1 :
+        damage_tire += 1
+    else :
+        normal_tire += 1
+
+    if cv2.waitKey(1) == ord('q') or cnt == 100:
+        print(damage_tire, normal_tire)
         break
